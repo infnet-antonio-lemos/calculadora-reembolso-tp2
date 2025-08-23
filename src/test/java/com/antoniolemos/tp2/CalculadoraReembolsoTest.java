@@ -7,6 +7,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
@@ -77,7 +79,8 @@ public class CalculadoraReembolsoTest {
         double valor = 0;
         double expected = 0;
         double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
-        assertEqualsComMargem(expected, result);
+        List<Consulta> consultas = this.historicoConsultas.listarConsultas();
+        assertEquals(consultas.size(),  1);
     }
 
     @Test
@@ -98,5 +101,16 @@ public class CalculadoraReembolsoTest {
         double expected = 150.0;
         double result = this.calculadoraReembolso.calcularReembolso(valor, this.planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
         assertEqualsComMargem(expected, result);
+    }
+
+    @Test
+    public void deveCalcularReembolsoTesteCompleto() {
+        double valor = 200.0;
+        double expected = 100.0;
+        double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
+        List<Consulta> consultas = this.historicoConsultas.listarConsultas();
+        assertEqualsComMargem(expected, result);
+        assertEquals(consultas.size(),  1);
+        verify(auditoria).registrarConsulta();
     }
 }
