@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class CalculadoraReembolsoTest {
@@ -23,10 +24,13 @@ public class CalculadoraReembolsoTest {
     @Mock
     Auditoria auditoria;
 
+    @Mock
+    AutorizadorReembolso autorizadorReembolso;
+
     @BeforeEach
     public void setup() {
         this.historicoConsultas = new FakeHistoricoConsulta(this.auditoria);
-        this.calculadoraReembolso = new CalculadoraReembolso(this.historicoConsultas);
+        this.calculadoraReembolso = new CalculadoraReembolso(this.historicoConsultas, this.autorizadorReembolso);
     }
 
     PlanoSaudeStub planoSaudeStubBasico = new PlanoSaudeStub(0.5);
@@ -71,5 +75,11 @@ public class CalculadoraReembolsoTest {
     public void deveAuditarAoRegistrarConsulta() {
         calculadoraReembolso.calcularReembolso(1.0, 1.0, paciente);
         verify(auditoria).registrarConsulta();
+    }
+
+    @Test
+    public void deveLancarExcecaoAoSolicitarReembolsoSemAutorizacao() {
+        when(autorizadorReembolso.autorizarReembolso(paciente)).thenReturn(false);
+        assertThrows(Exception.class, () -> calculadoraReembolso.solicitarReembolso(paciente));
     }
 }
