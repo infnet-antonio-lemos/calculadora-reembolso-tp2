@@ -29,7 +29,6 @@ public class CalculadoraReembolsoTest {
         this.calculadoraReembolso = new CalculadoraReembolso(this.historicoConsultas);
     }
 
-
     PlanoSaudeStub planoSaudeStubBasico = new PlanoSaudeStub(0.5);
     PlanoSaudeStub planoSaudeStubPremium = new PlanoSaudeStub(0.8);
 
@@ -72,10 +71,5 @@ public class CalculadoraReembolsoTest {
     public void deveAuditarAoRegistrarConsulta() {
         calculadoraReembolso.calcularReembolso(1.0, 1.0, paciente);
         verify(auditoria).registrarConsulta();
-    }
-
-    @Test
-    public void deveRetornarExcecaoAoTentarReembolsarConsultaNaoAutorizada() {
-        assertThrows(Exception.class, () -> )
     }
 }
