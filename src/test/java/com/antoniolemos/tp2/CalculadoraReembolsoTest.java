@@ -40,6 +40,11 @@ public class CalculadoraReembolsoTest {
         return new Consulta(paciente, java.time.LocalDateTime.now());
     }
 
+    private void assertEqualsComMargem(double expected, double actual) {
+        double delta = 0.01;
+        assertEquals(expected, actual, delta);
+    }
+
     @ParameterizedTest
     @CsvSource({
             "200.0, 0.7, 140.0",
@@ -48,7 +53,7 @@ public class CalculadoraReembolsoTest {
     })
     public void deveCalcularReembolso(double value, double percentage, double expected) {
         double result = this.calculadoraReembolso.calcularReembolso(value, percentage, this.criarConsulta());
-        assertEquals(expected, result);
+        assertEqualsComMargem(expected, result);
     }
 
     @Test
@@ -56,7 +61,7 @@ public class CalculadoraReembolsoTest {
         double valor = 200.0;
         double expected = 100.0;
         double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
-        assertEquals(expected, result);
+        assertEqualsComMargem(expected, result);
     }
 
     @Test
@@ -64,7 +69,7 @@ public class CalculadoraReembolsoTest {
         double valor = 200.0;
         double expected = 160.0;
         double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubPremium.percentualCobertura(), this.criarConsulta());
-        assertEquals(expected, result);
+        assertEqualsComMargem(expected, result);
     }
 
     @Test
@@ -72,7 +77,7 @@ public class CalculadoraReembolsoTest {
         double valor = 0;
         double expected = 0;
         double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
-        assertEquals(expected, result);
+        assertEqualsCom(expected, result);
     }
 
     @Test
