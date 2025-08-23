@@ -36,6 +36,10 @@ public class CalculadoraReembolsoTest {
     PlanoSaudeStub planoSaudeStubBasico = new PlanoSaudeStub(0.5);
     PlanoSaudeStub planoSaudeStubPremium = new PlanoSaudeStub(0.8);
 
+    private Consulta criarConsulta() {
+        return new Consulta(paciente, java.time.LocalDateTime.now());
+    }
+
     @ParameterizedTest
     @CsvSource({
             "200.0, 0.7, 140.0",
@@ -43,7 +47,7 @@ public class CalculadoraReembolsoTest {
             "100.0, 1.0, 100.0",
     })
     public void deveCalcularReembolso(double value, double percentage, double expected) {
-        double result = this.calculadoraReembolso.calcularReembolso(value, percentage, paciente);
+        double result = this.calculadoraReembolso.calcularReembolso(value, percentage, this.criarConsulta());
         assertEquals(expected, result);
     }
 
@@ -51,7 +55,7 @@ public class CalculadoraReembolsoTest {
     public void deveCalcularReembolsoPlanoBasico() {
         double valor = 200.0;
         double expected = 100.0;
-        double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), paciente);
+        double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
         assertEquals(expected, result);
     }
 
@@ -59,7 +63,7 @@ public class CalculadoraReembolsoTest {
     public void deveCalcularReembolsoPlanoPremium() {
         double valor = 200.0;
         double expected = 160.0;
-        double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubPremium.percentualCobertura(), paciente);
+        double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubPremium.percentualCobertura(), this.criarConsulta());
         assertEquals(expected, result);
     }
 
@@ -67,13 +71,13 @@ public class CalculadoraReembolsoTest {
     public void deveRegistrarConsultaAoCalcularReembolso() {
         double valor = 0;
         double expected = 0;
-        double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), paciente);
+        double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
         assertEquals(expected, result);
     }
 
     @Test
     public void deveAuditarAoRegistrarConsulta() {
-        calculadoraReembolso.calcularReembolso(1.0, 1.0, paciente);
+        calculadoraReembolso.calcularReembolso(1.0, 1.0, this.criarConsulta());
         verify(auditoria).registrarConsulta();
     }
 

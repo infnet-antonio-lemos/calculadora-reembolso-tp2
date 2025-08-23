@@ -7,8 +7,8 @@ public class CalculadoraReembolso {
         this.historicoConsultas = historicoConsultas;
         this.autorizadorReembolso = autorizadorReembolso;
     }
-    public double calcularReembolso(double valor, double percentual, Paciente paciente) {
-        this.historicoConsultas.adicionarConsulta(new Consulta(paciente, java.time.LocalDateTime.now()));
+    public double calcularReembolso(double valor, double percentual, Consulta consulta) {
+        this.historicoConsultas.adicionarConsulta(consulta);
         return valor * percentual;
     }
 
