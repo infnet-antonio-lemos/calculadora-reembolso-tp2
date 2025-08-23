@@ -67,7 +67,7 @@ public class CalculadoraReembolsoTest {
     @Test
     public void deveCalcularReembolsoPlanoPremium() {
         double valor = 200.0;
-        double expected = 160.0;
+        double expected = 150.0;
         double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubPremium.percentualCobertura(), this.criarConsulta());
         assertEqualsComMargem(expected, result);
     }
@@ -77,7 +77,7 @@ public class CalculadoraReembolsoTest {
         double valor = 0;
         double expected = 0;
         double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
-        assertEqualsCom(expected, result);
+        assertEqualsComMargem(expected, result);
     }
 
     @Test
@@ -90,5 +90,13 @@ public class CalculadoraReembolsoTest {
     public void deveLancarExcecaoAoSolicitarReembolsoSemAutorizacao() {
         when(autorizadorReembolso.autorizarReembolso(paciente)).thenReturn(false);
         assertThrows(Exception.class, () -> calculadoraReembolso.solicitarReembolso(paciente));
+    }
+
+    @Test
+    public void deveLimitarReembolsoPara150() {
+        double valor = 400_000.0;
+        double expected = 150.0;
+        double result = this.calculadoraReembolso.calcularReembolso(valor, this.planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
+        assertEqualsComMargem(expected, result);
     }
 }

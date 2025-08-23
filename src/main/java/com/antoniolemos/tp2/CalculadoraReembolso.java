@@ -9,7 +9,12 @@ public class CalculadoraReembolso {
     }
     public double calcularReembolso(double valor, double percentual, Consulta consulta) {
         this.historicoConsultas.adicionarConsulta(consulta);
-        return valor * percentual;
+        double reembolso = valor * percentual;
+        double limit = 150.0;
+        if (reembolso > limit) {
+            return limit;
+        }
+        return reembolso;
     }
 
     public void solicitarReembolso(Paciente paciente) throws Exception {
