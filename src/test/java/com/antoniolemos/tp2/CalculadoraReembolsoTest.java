@@ -20,6 +20,9 @@ public class CalculadoraReembolsoTest {
     public CalculadoraReembolso calculadoraReembolso;
     public HistoricoConsultas historicoConsultas;
 
+    /**
+     * Mocks para as dependências da CalculadoraReembolso.
+     */
     @Mock
     Paciente paciente;
 
@@ -29,24 +32,44 @@ public class CalculadoraReembolsoTest {
     @Mock
     AutorizadorReembolso autorizadorReembolso;
 
+    /**
+     * Setup antes de cada teste para inicializar a CalculadoraReembolso com as dependências mockadas.
+     */
     @BeforeEach
     public void setup() {
         this.historicoConsultas = new FakeHistoricoConsulta(this.auditoria);
         this.calculadoraReembolso = new CalculadoraReembolso(this.historicoConsultas, this.autorizadorReembolso);
     }
 
+    /**
+     * Stubs para planos de saúde com diferentes percentuais de cobertura.
+     */
     PlanoSaudeStub planoSaudeStubBasico = new PlanoSaudeStub(0.5);
     PlanoSaudeStub planoSaudeStubPremium = new PlanoSaudeStub(0.8);
 
+    /**
+     * Função auxiliar para criar uma consulta com o paciente mockado e a data atual.
+     */
     private Consulta criarConsulta() {
         return new Consulta(paciente, java.time.LocalDateTime.now());
     }
 
+    /**
+     * Função auxiliar para comparar valores double com uma margem de erro.
+     * @param expected
+     * @param actual
+     */
     private void assertEqualsComMargem(double expected, double actual) {
         double delta = 0.01;
         assertEquals(expected, actual, delta);
     }
 
+    /**
+     * Teste parametrizado para calcular reembolso com diferentes valores e percentuais.
+     * @param value
+     * @param percentage
+     * @param expected
+     */
     @ParameterizedTest
     @CsvSource({
             "200.0, 0.7, 140.0",
@@ -58,6 +81,9 @@ public class CalculadoraReembolsoTest {
         assertEqualsComMargem(expected, result);
     }
 
+    /**
+     * Testes específico para planos de saúde básico.
+     */
     @Test
     public void deveCalcularReembolsoPlanoBasico() {
         double valor = 200.0;
@@ -66,6 +92,9 @@ public class CalculadoraReembolsoTest {
         assertEqualsComMargem(expected, result);
     }
 
+    /**
+     * Testes específico para planos de saúde premium.
+     */
     @Test
     public void deveCalcularReembolsoPlanoPremium() {
         double valor = 200.0;
@@ -74,6 +103,9 @@ public class CalculadoraReembolsoTest {
         assertEqualsComMargem(expected, result);
     }
 
+    /**
+     * Teste para verificar se a consulta é registrada ao calcular o reembolso.
+     */
     @Test
     public void deveRegistrarConsultaAoCalcularReembolso() {
         double valor = 0;
@@ -82,18 +114,27 @@ public class CalculadoraReembolsoTest {
         assertEquals(1, consultas.size());
     }
 
+    /**
+     * Teste para verificar se a auditoria registra a consulta ao calcular o reembolso.
+     */
     @Test
     public void deveAuditarAoRegistrarConsulta() {
         calculadoraReembolso.calcularReembolso(1.0, 1.0, this.criarConsulta());
         verify(auditoria).registrarConsulta();
     }
 
+    /**
+     * Teste para verificar se uma exceção é lançada ao solicitar reembolso sem autorização.
+     */
     @Test
     public void deveLancarExcecaoAoSolicitarReembolsoSemAutorizacao() {
         when(autorizadorReembolso.autorizarReembolso(paciente)).thenReturn(false);
         assertThrows(Exception.class, () -> calculadoraReembolso.solicitarReembolso(paciente));
     }
 
+    /**
+     * Teste para verificar se o reembolso é limitado a 150.
+     */
     @Test
     public void deveLimitarReembolsoPara150() {
         double valor = 400_000.0;
@@ -102,6 +143,9 @@ public class CalculadoraReembolsoTest {
         assertEqualsComMargem(expected, result);
     }
 
+    /**
+     * Teste completo para calcular reembolso, registrar consulta e auditar.
+     */
     @Test
     public void deveCalcularReembolsoTesteCompleto() {
         double valor = 200.0;
