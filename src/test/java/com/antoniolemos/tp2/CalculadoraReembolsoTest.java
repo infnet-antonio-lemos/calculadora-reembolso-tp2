@@ -77,10 +77,9 @@ public class CalculadoraReembolsoTest {
     @Test
     public void deveRegistrarConsultaAoCalcularReembolso() {
         double valor = 0;
-        double expected = 0;
-        double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
+        this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
         List<Consulta> consultas = this.historicoConsultas.listarConsultas();
-        assertEquals(consultas.size(),  1);
+        assertEquals(1, consultas.size());
     }
 
     @Test
@@ -110,7 +109,7 @@ public class CalculadoraReembolsoTest {
         double result = this.calculadoraReembolso.calcularReembolso(valor, planoSaudeStubBasico.percentualCobertura(), this.criarConsulta());
         List<Consulta> consultas = this.historicoConsultas.listarConsultas();
         assertEqualsComMargem(expected, result);
-        assertEquals(consultas.size(),  1);
+        assertEquals(1, consultas.size());
         verify(auditoria).registrarConsulta();
     }
 }
