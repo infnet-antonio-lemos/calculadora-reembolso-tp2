@@ -122,6 +122,7 @@ public class CalculadoraReembolsoTest {
     @Test
     public void deveAuditarAoRegistrarConsulta() {
         calculadoraReembolso.calcularReembolso(1.0, 1.0, this.criarConsulta());
+        // o verify é uma forma de spy já embutida nos mocks do Mockito
         verify(auditoria).registrarConsulta();
     }
 
