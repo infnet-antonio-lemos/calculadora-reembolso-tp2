@@ -22,6 +22,8 @@ public class CalculadoraReembolsoTest {
 
     /**
      * Mocks para as dependências da CalculadoraReembolso.
+     * Os mocks ajudam a isolar o comportamento da classe em teste.
+     * São melhores usados em cenários onde a implementação real é complexa ou externa.
      */
     @Mock
     Paciente paciente;
